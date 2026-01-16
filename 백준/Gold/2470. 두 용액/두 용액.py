@@ -1,31 +1,29 @@
 import sys
 
-
-def two_liquid(arr):
-    left = 0
-    right = len(arr) - 1
-
-    answer_1 = -1
-    answer_2 = -1
-
-    answer_min_diff = float("inf")
-    while left < right:
-        temp = arr[left] + arr[right]
-        if answer_min_diff > abs(temp):  # temp가 좋은것
-            answer_1 = arr[left]
-            answer_2 = arr[right]
-            answer_min_diff = abs(temp)
-
-        if temp == 0:
-            break
-        elif temp > 0:
-            right -= 1
-        else:
-            left += 1
-    print(answer_1, answer_2)
+N = int(sys.stdin.readline())
+waters = list(map(int, sys.stdin.readline().split()))
 
 
-N = sys.stdin.readline()
-data = list(map(int, sys.stdin.readline().split()))
-data.sort()
-two_liquid(data)
+best_couple = ()
+best_diff = float('inf')
+waters.sort()
+left = 0
+right = N - 1
+
+while left < right:
+    diff = waters[right] + waters[left]
+
+    if diff == 0:
+        best_couple = (waters[left], waters[right])
+        break
+
+    if best_diff > abs(diff):
+        best_diff = abs(diff)
+        best_couple = (waters[left], waters[right])
+
+    if diff > 0:
+        right -= 1
+    else:
+        left += 1
+
+print(*best_couple)
