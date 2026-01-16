@@ -1,27 +1,27 @@
 import sys
 
-def sum_woods(woods, cut):
-    result = 0
-    for wood in woods:
-        if wood > cut:
-            result += wood - cut
-    return result
+
+def cut_woods(arr, cutline):
+    ans = 0
+    for i in arr:
+        if i > cutline:
+            ans += i - cutline
+    return ans
 
 
-N, need = map(int, sys.stdin.readline().split())
-wood_list = list(map(int, sys.stdin.readline().split()))
+N, M = map(int, sys.stdin.readline().split())
+woods = list(map(int, sys.stdin.readline().split()))
 
-wood_list.sort()
+
 left = 0
-right = wood_list[-1]
+right = max(woods)
+
 while left < right:
     mid = (left + right) // 2
-    target = sum_woods(wood_list, mid)
 
-    if need < target:
+    if cut_woods(woods, mid) >= M:
         left = mid + 1
     else:
         right = mid
-if sum_woods(wood_list, left) < need:
-    left = left - 1
-print(left)
+
+print(left - 1)
