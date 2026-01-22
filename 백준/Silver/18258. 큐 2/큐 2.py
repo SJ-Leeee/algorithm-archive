@@ -1,53 +1,49 @@
 from collections import deque
 import sys
 
-# push X: 정수 X를 큐에 넣는 연산이다.
-# pop: 큐에서 가장 앞에 있는 정수를 빼고, 그 수를 출력한다. 만약 큐에 들어있는 정수가 없는 경우에는 -1을 출력한다.
-# size: 큐에 들어있는 정수의 개수를 출력한다.
-# empty: 큐가 비어있으면 1, 아니면 0을 출력한다.
-# front: 큐의 가장 앞에 있는 정수를 출력한다. 만약 큐에 들어있는 정수가 없는 경우에는 -1을 출력한다.
-# back: 큐의 가장 뒤에 있는 정수를 출력한다. 만약 큐에 들어있는 정수가 없는 경우에는 -1을 출력한다.
 
+def command_factory(cmd, num=None):
+    if cmd == "push":
+        queue.append(num)
 
-def queue_action(command, dq):
-    if command[0] == "push":
-        dq.append(int(command[1]))
-    elif command[0] == "pop":
-        if len(dq) == 0:
-            return -1
+    elif cmd == "pop":
+        if not queue:
+            result.append(-1)
         else:
-            return dq.popleft()
-    elif command[0] == "size":
-        return len(dq)
-    elif command[0] == "empty":
-        if len(dq) == 0:
-            return 1
-        else:
-            return 0
-    elif command[0] == "front":
-        if len(dq) == 0:
-            return -1
-        else:
-            return dq[0]
-    elif command[0] == "back":
-        if len(dq) == 0:
-            return -1
-        else:
-            return dq[-1]
+            result.append(queue.popleft())
 
+    elif cmd == "size":
+        result.append(len(queue))
 
-dq = deque()
-# dq.append(1)  # 오른쪽 끝에 추가
-# dq.appendleft(2)  # 왼쪽 끝에 추가
-# # dq.pop()  # 오른쪽 끝에서 제거
-# print(dq.popleft())  # 왼쪽 끝에서 제거 (FIFO)
-# print(dq.popleft())  # 왼쪽 끝에서 제거 (FIFO)
-# print(dq.popleft())  # 왼쪽 끝에서 제거 (FIFO)
+    elif cmd == "empty":
+        if queue:
+            result.append(0)
+        else:
+            result.append(1)
+    elif cmd == "front":
+        if queue:
+            result.append(queue[0])
+        else:
+            result.append(-1)
+    elif cmd == "back":
+        if queue:
+            result.append(queue[-1])
+        else:
+            result.append(-1)
+
 
 N = int(sys.stdin.readline())
+queue = deque()
+result = []
 
 for _ in range(N):
-    command = sys.stdin.readline().split()
-    a = queue_action(command, dq)
-    if a != None:
-        print(a)
+    cmd = sys.stdin.readline().split()
+
+    if len(cmd) > 1:
+        command_factory(cmd[0], int(cmd[1]))
+    else:
+        command_factory(cmd[0])
+
+
+for i in result:
+    print(i)
