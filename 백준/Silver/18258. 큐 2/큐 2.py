@@ -1,49 +1,28 @@
 from collections import deque
 import sys
 
+input = sys.stdin.readline
 
-def command_factory(cmd, num=None):
-    if cmd == "push":
-        queue.append(num)
-
-    elif cmd == "pop":
-        if not queue:
-            result.append(-1)
-        else:
-            result.append(queue.popleft())
-
-    elif cmd == "size":
-        result.append(len(queue))
-
-    elif cmd == "empty":
-        if queue:
-            result.append(0)
-        else:
-            result.append(1)
-    elif cmd == "front":
-        if queue:
-            result.append(queue[0])
-        else:
-            result.append(-1)
-    elif cmd == "back":
-        if queue:
-            result.append(queue[-1])
-        else:
-            result.append(-1)
-
-
-N = int(sys.stdin.readline())
+N = int(input())
 queue = deque()
 result = []
 
 for _ in range(N):
-    cmd = sys.stdin.readline().split()
+    line = input().split()
+    cmd = line[0]
 
-    if len(cmd) > 1:
-        command_factory(cmd[0], int(cmd[1]))
-    else:
-        command_factory(cmd[0])
+    match cmd:
+        case "push":
+            queue.append(int(line[1]))
+        case "pop":
+            result.append(queue.popleft() if queue else -1)
+        case "size":
+            result.append(len(queue))
+        case "empty":
+            result.append(0 if queue else 1)
+        case "front":
+            result.append(queue[0] if queue else -1)
+        case "back":
+            result.append(queue[-1] if queue else -1)
 
-
-for i in result:
-    print(i)
+print("\n".join(map(str, result)))
