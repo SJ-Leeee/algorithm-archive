@@ -1,17 +1,12 @@
-
 from collections import deque
 import sys
 
 N = int(sys.stdin.readline())
-dq = deque()
-dq.extend(range(1, N + 1))
+dq = deque([i for i in range(1, N + 1)])
 
-while True:
-    if len(dq) == 1:
-        break
+while len(dq) > 1:
     dq.popleft()
-    if len(dq) == 1:
-        break
     dq.append(dq.popleft())
+
 
 print(dq[0])
