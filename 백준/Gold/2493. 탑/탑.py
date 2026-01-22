@@ -1,28 +1,32 @@
+from collections import deque
 import sys
 
 
-N = int(sys.stdin.readline().strip())
-arr = list(map(int, sys.stdin.readline().split()))
+N = int(sys.stdin.readline())
+towers = list(map(int, sys.stdin.readline().split()))
+
+# 삭제해가면서 만약 len이 0이면 0을 추가하는 방식
 
 
 def tower(arr):
     stack = []
     result = []
-    for i, item in enumerate(arr):
-        while len(stack) > 0:
-            if item <= stack[-1][1]:  # 스택의 번호가 나보다 크다면
+
+    for idx, item in enumerate(arr):
+        # 스택이 존재하면 비교한후에 스택에 가장 높은것만 남겨둔다.
+        while stack:
+            if item <= stack[-1][1]:
                 result.append(stack[-1][0] + 1)
-                stack.append((i, item))
+                stack.append((idx, item))
                 break
 
             stack.pop()
 
-        if len(stack) == 0:
+        if not stack:
             result.append(0)
-            stack.append((i, item))
-        pass
+            stack.append((idx, item))
 
     print(*result)
 
 
-tower(arr)
+tower(towers)
