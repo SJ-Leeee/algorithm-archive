@@ -1,37 +1,39 @@
+from itertools import permutations
 import sys
 
 
-min_cost = float("inf")
+def lotate(t_map, city_order):
+    t_sum = 0
+    # tmap[0][2] > tmap[2][1] > tmap[1][3]...
+    for i in range(len(t_map)):
+        if i == len(t_map) - 1:
+            cost = t_map[city_order[i]][city_order[0]]
+        else:
+            cost = t_map[city_order[i]][city_order[i + 1]]
+
+        if cost == 0:
+            return False
+
+        t_sum += cost
+
+    return t_sum
 
 
-def traveling_salesperson_problem(arr, result, visited, depth, d_sum):
-    global min_cost
-    if depth == len(arr) - 1:
-        if arr[result[depth - 1]][0] == 0:
-            return  # 돌아갈 수 없으면 무효
-        d_sum += arr[result[depth - 1]][0]
-        min_cost = min(d_sum, min_cost)
-        return
+N = int(sys.stdin.readline())
 
-    for i in range(len(arr)):  # 항상 모든원소를 순회
-        if not visited[i]:  # 원소가 선택되지 않았더라면
-            cur_loca = result[depth - 1]
-            if arr[cur_loca][i] == 0:
-                continue
-            visited[i] = True  # 해당원소 사용
-            d_sum += arr[cur_loca][i]  # 더하기
-            result[depth] = i
-            traveling_salesperson_problem(arr, result, visited, depth + 1, d_sum)
-            d_sum -= arr[cur_loca][i]
-            visited[i] = False  # 해당원소 사용중지
+t_map = []
+for i in range(N):
+    line = list(map(int, sys.stdin.readline().split()))
+    t_map.append(line)
 
+cities = [i for i in range(N)]
 
-N = int(input())
-data = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
-result = [0] * len(data)
-visited = [False] * len(data)
-visited[0] = True
+min_cost = float('inf')
+for perm in permutations(cities, N):
+    ret = lotate(t_map, perm)
+    if not ret:
+        continue
 
+    min_cost = min(min_cost, ret)
 
-traveling_salesperson_problem(data, result, visited, 0, 0)
 print(min_cost)
