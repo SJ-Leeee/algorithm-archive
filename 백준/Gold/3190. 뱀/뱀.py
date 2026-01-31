@@ -27,14 +27,14 @@ is_game_over = False
 for _ in range(L):
     change_second, rotate = sys.stdin.readline().split()
     change_second = int(change_second)
-    
+
     if is_game_over:
         break
 
     # change_second초까지 이동
     while count < change_second:
         count += 1  # 시간 먼저 증가
-        
+
         new_row = cur_loca[0] + direct[direct_idx][0]
         new_col = cur_loca[1] + direct[direct_idx][1]
 
@@ -42,7 +42,7 @@ for _ in range(L):
         if new_col >= N or new_col < 0 or new_row >= N or new_row < 0:
             is_game_over = True
             break
-        
+
         # 자신의 몸 충돌 체크
         if visited[new_row][new_col]:
             is_game_over = True
@@ -52,12 +52,12 @@ for _ in range(L):
         dq.append([new_row, new_col])
         visited[new_row][new_col] = True
         cur_loca = [new_row, new_col]
-        
+
         # 사과 먹기
         if apple[new_row][new_col]:
             apple[new_row][new_col] = False
             snake_len += 1
-        
+
         # 꼬리 처리
         while len(dq) > snake_len:
             r, c = dq.popleft()
@@ -74,7 +74,7 @@ for _ in range(L):
 if not is_game_over:
     while True:
         count += 1  # 시간 먼저 증가
-        
+
         new_row = cur_loca[0] + direct[direct_idx][0]
         new_col = cur_loca[1] + direct[direct_idx][1]
 
@@ -86,11 +86,11 @@ if not is_game_over:
         dq.append([new_row, new_col])
         visited[new_row][new_col] = True
         cur_loca = [new_row, new_col]
-        
+
         if apple[new_row][new_col]:
             apple[new_row][new_col] = False  # 사과 제거 추가!
             snake_len += 1
-            
+
         while len(dq) > snake_len:
             r, c = dq.popleft()
             visited[r][c] = False
