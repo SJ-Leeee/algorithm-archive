@@ -15,7 +15,6 @@ def lis_dp():
         for j in range(i):
             if data[i] > data[j]:
                 dp[i] = max(dp[i], dp[j] + 1)
-
     print(max(dp))
 
 
@@ -32,10 +31,10 @@ def lis_bintree():
     result.append(data[0])
     for i in range(1, len(data)):
         if data[i] > result[-1]:
-            result.append(data[i])
+            result.append(data[i])  # result = [1,5]
         else:
             left = lower_bound(result, data[i])
-            result[left] = data[i]
+            result[left] = data[i]  # 이 값으로 대체하는구나
         print(result)
     # 이하의 최대값
 
