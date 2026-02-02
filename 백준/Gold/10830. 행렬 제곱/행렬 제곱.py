@@ -1,79 +1,73 @@
+"""
+3 3
+1 2 3
+4 5 6
+7 8 9
+
+필요한 함수
+1. 쪼개는 함수
+2. 곱하는 함수
+3. 모듈로 연산 함수
+일단
+A^n = A^2/n * A^2/n
+A^n = A^2/n * A^2/n * A
+
+똑같은 수니까 메모제이션 필요함
+모듈러연산은 언제하지? 매번해도됨
+"""
 
 import sys
 
+N, EXP = map(int, sys.stdin.readline().split())
 
-def matrix_multiply(A, B):
-    """
-    두 행렬 A와 B를 곱하는 함수
-    A: m x n 행렬
-    B: n x p 행렬
-    결과: m x p 행렬
-    """
-    row_A = len(A)
-    col_A = len(A[0])
-    col_B = len(B[0])
-
-    result = [[0 for _ in range(col_B)] for _ in range(row_A)]
-    for i in range(row_A):
-        for j in range(col_B):
-            for k in range(col_A):
-                result[i][j] = (result[i][j] + A[i][k] * B[k][j]) % 1000
-
-    # for row in range(len(result)):
-    #     for col in range(len(result[0])):
-    #         result[row][col] = result[row][col] % 1000
-
-    return result
+matrix = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
+matrix_product_memo = {}
 
 
-N, power = map(int, sys.stdin.readline().split())
-matrix = []
-for _ in range(N):
-    a = list(map(int, sys.stdin.readline().split()))
-    matrix.append(a)
-
-memory = {}
-
-
-def matrix_mod(matrix):
-    """행렬의 모든 원소에 모듈로 연산 적용"""
-    N = len(matrix)
-    result = [[0] * N for _ in range(N)]
-    for i in range(N):
-        for j in range(N):
-            result[i][j] = matrix[i][j] % 1000
-    return result
+def matrix_modular(m):
+    n = len(m)
+    for i in range(n):
+        for j in range(n):
+            m[i][j] = m[i][j] % 1000
+    return m
 
 
-def matrix_power(matrix, power):
-    if power in memory:
-        return memory[power]
+def matrix_product(a, b):
+    n = len(a)  # N*N 행렬
+    result = [[0] * n for _ in range(n)]
+    # result[0][0] = A (0,0) * B (0,0) + A(0,1) * B (1,0)
+    # result[0][1] = A (0,0) * B (0,1) + A(0,1) * B (1,1)
+    # result[1][0] = A (1,0) * B (0,0) + A(1,1) * B (1,0)
+    # result[1][1] = A (1,0) * B (0,1) + A(1,1) * B (1,1)
 
-    if power == 1:
-        result = matrix_mod(matrix)
-        memory[power] = result
-        return result
+    # result[0][0] = A (0,0) * B (0,0) + A(0,1) * B (1,0) + A(0,2) * B(2,0)
+    for row in range(n):  # A의 행
+        for col in range(n):  # B의 열
+            for elem in range(n):  # 각 원소
+                result[row][col] += a[row][elem] * b[elem][col]
 
-    half = power // 2
-    remainder = power - half
-
-    # 왼쪽 부분 계산
-    if half not in memory:
-        memory[half] = matrix_power(matrix, half)
-    left_matrix = memory[half]
-
-    # 오른쪽 부분 계산
-    if remainder not in memory:
-        memory[remainder] = matrix_power(matrix, remainder)
-    right_matrix = memory[remainder]
-
-    # 최종 결과 계산 및 저장
-    result = matrix_multiply(left_matrix, right_matrix)
-    memory[power] = result
-    return result
+    return matrix_modular(result)
 
 
-a = matrix_power(matrix, power)
+def matrix_divde(exp, matrix):
+    # 탈출조건
+    if exp in matrix_product_memo:
+        # n차원 행렬형태
+        return matrix_product_memo[exp]
 
-for i in range(len(a)):
-    print(" ".join(map(str, a[i])))
+    if exp == 1:
+        return matrix_modular(matrix)
+
+    # 나누기
+    half = matrix_divde(exp // 2, matrix)
+    if exp % 2 == 0:  # 짝수라면
+        matrix_product_memo[exp] = matrix_product(half, half)
+    else:  # 홀수라면
+        matrix_product_memo[exp] = matrix_product(matrix_product(half, half), matrix)
+
+    return matrix_product_memo[exp]
+
+
+answer = matrix_divde(EXP, matrix)
+for i in answer:
+    print(*i)
