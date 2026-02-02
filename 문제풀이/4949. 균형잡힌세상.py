@@ -11,13 +11,11 @@ import sys
 
 
 while True:
-    line = sys.stdin.readline().strip()
-    if not line:  # 빈 문자열이면 EOF
+    line = sys.stdin.readline()
+    if line == ".\n":
         break
+    line = line.strip()
 
-    if line[-1] != ".":  # . 으로 끝나지않으면 탈락
-        print("no")
-        continue
     stack = []
     result = "yes"
     for c in line:
