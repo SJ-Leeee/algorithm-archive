@@ -1,39 +1,48 @@
-def count_paper(paper_list, r, start_row=0, start_col=0):
-    global white, blue
-    
-    # 첫 번째 원소로 전체가 같은지 확인
-    first_value = paper_list[start_row][start_col]
-    is_uniform = True
-    
-    # 조기 종료: 다른 값이 발견되면 바로 분할
-    for i in range(start_row, start_row + r):
-        for j in range(start_col, start_col + r):
-            if paper_list[i][j] != first_value:
-                is_uniform = False
-                break
-        if not is_uniform:
-            break
-    
-    if is_uniform:
-        if first_value == 0:
-            white += 1
-        else:
-            blue += 1
-        return
-    
-    # 분할정복 (새 리스트 생성하지 않고 인덱스만 전달)
-    half = r // 2
-    count_paper(paper_list, half, start_row, start_col)                    # 좌상단
-    count_paper(paper_list, half, start_row, start_col + half)             # 우상단  
-    count_paper(paper_list, half, start_row + half, start_col)             # 좌하단
-    count_paper(paper_list, half, start_row + half, start_col + half)
-    
-n = int(input())
-data = [list(map(int, input().split())) for _ in range(n)]
+import sys
+
+
+N = int(sys.stdin.readline())
+paper = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
 
 white = 0
 blue = 0
 
-count_paper(data, n)
+
+def is_same_color(paper, row, col, N):
+    s_sum = 0
+    for i in range(row, row + N):
+        for j in range(col, col + N):
+            s_sum += paper[i][j]
+
+    if s_sum == N**2:
+        return [True, 1]
+    elif s_sum == 0:
+        return [True, 0]
+    else:
+        return [False]
+
+
+def paper_devide(paper, row, col, N):
+    # 처음엔 paper, 0, 0, 8 로 옴
+    global white, blue
+
+    ret = is_same_color(paper, row, col, N)
+    if ret[0] == True:
+        if ret[1] == 1:
+            blue += 1
+        else:
+            white += 1
+
+        return
+
+    half = N // 2
+    paper_devide(paper, row, col + half, half)
+    paper_devide(paper, row, col, half)
+    paper_devide(paper, row + half, col, half)
+    paper_devide(paper, row + half, col + half, half)
+
+
+paper_devide(paper, 0, 0, N)
+
 print(white)
 print(blue)

@@ -1,37 +1,53 @@
+from itertools import permutations
 import sys
 
 
+# N = int(sys.stdin.readline())
+
+# t_map = []
+# for i in range(N):
+#     line = list(map(int, sys.stdin.readline().split()))
+#     t_map.append(line)
+
+
+def lotate(t_map, city_order):
+    t_sum = 0
+    # tmap[0][2] > tmap[2][1] > tmap[1][3]...
+    for i in range(len(city_order) - 1):
+        cost = t_map[city_order[i]][city_order[i + 1]]
+
+        if cost == 0:
+            return False
+
+        t_sum += cost
+
+    first = t_map[0][city_order[0]]
+    last = t_map[city_order[-1]][0]
+
+    if first == 0 or last == 0:
+        return False
+
+    t_sum = t_sum + first + last
+
+    return t_sum
+
+
+N = int(sys.stdin.readline())
+
+t_map = []
+for i in range(N):
+    line = list(map(int, sys.stdin.readline().split()))
+    t_map.append(line)
+
+cities = [i for i in range(1, N)]
+# 0번 하자
+
 min_cost = float("inf")
+for perm in permutations(cities, N - 1):
+    ret = lotate(t_map, perm)
+    if not ret:
+        continue
 
+    min_cost = min(min_cost, ret)
 
-def traveling_salesperson_problem(arr, result, visited, depth, d_sum):
-    global min_cost
-    if depth == len(arr) - 1:
-        if arr[result[depth - 1]][0] == 0:
-            return  # 돌아갈 수 없으면 무효
-        d_sum += arr[result[depth - 1]][0]
-        min_cost = min(d_sum, min_cost)
-        return
-
-    for i in range(len(arr)):  # 항상 모든원소를 순회
-        if not visited[i]:  # 원소가 선택되지 않았더라면
-            cur_loca = result[depth - 1]
-            if arr[cur_loca][i] == 0:
-                continue
-            visited[i] = True  # 해당원소 사용
-            d_sum += arr[cur_loca][i]  # 더하기
-            result[depth] = i
-            traveling_salesperson_problem(arr, result, visited, depth + 1, d_sum)
-            d_sum -= arr[cur_loca][i]
-            visited[i] = False  # 해당원소 사용중지
-
-
-N = int(input())
-data = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
-result = [0] * len(data)
-visited = [False] * len(data)
-visited[0] = True
-
-
-traveling_salesperson_problem(data, result, visited, 0, 0)
 print(min_cost)
