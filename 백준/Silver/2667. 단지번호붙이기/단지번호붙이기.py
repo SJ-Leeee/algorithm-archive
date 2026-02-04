@@ -1,52 +1,31 @@
-from collections import deque
+
 import sys
 
 
+def dfs(row, col, visited):
+    visited[row][col] = True
+    cnt = 1
+    for dr, dc in direct:
+        nr, nc = row + dr, col + dc
+        if 0 <= nr < N and 0 <= nc < N:
+            if not visited[nr][nc] and villages[nr][nc] == 1:
+                cnt += dfs(nr, nc, visited)
+
+    return cnt
+
+
 N = int(sys.stdin.readline())
+villages = [[int(x) for x in sys.stdin.readline().strip()] for _ in range(N)]
+visited = [[False] * N for _ in range(N)]
+direct = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
-apart_map = []
-direct = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-visited = set()
-for _ in range(N):
-    line = list(map(int, sys.stdin.readline().strip()))
-    apart_map.append(line)
+ans = []
+for i in range(N):
+    for j in range(N):
+        if not visited[i][j] and villages[i][j] == 1:
+            ans.append(dfs(i, j, visited))
 
-
-def bfs(r, c):
-
-    dq = deque()
-    dq.append((r, c))
-    visited.add((r, c))
-    temp_count = 0
-
-    while dq:
-        cur_r, cur_c = dq.popleft()
-
-        temp_count += 1
-
-        for dr, dc in direct:
-            nr = cur_r + dr
-            nc = cur_c + dc
-            if (
-                0 <= nr < N
-                and 0 <= nc < N
-                and apart_map[nr][nc] == 1
-                and (nr, nc) not in visited
-            ):  # 1이라면
-                visited.add((nr, nc))
-                dq.append((nr, nc))
-    return temp_count
-
-
-result = []
-
-for r in range(N):
-    for c in range(N):
-        if (r, c) not in visited and apart_map[r][c] == 1:
-            cnt = bfs(r, c)
-            result.append(cnt)
-
-result.sort()
-print(len(result))
-for i in result:
+ans.sort()
+print(len(ans))
+for i in ans:
     print(i)
