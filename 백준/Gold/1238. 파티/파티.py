@@ -25,19 +25,19 @@ def dijkstra(start, graph):
 
 V, E, P = map(int, sys.stdin.readline().split())
 graph = {}
+graph_rev = {}
 for i in range(1, V + 1):
     graph[i] = []
+    graph_rev[i] = []
 
 for _ in range(E):
     v1, v2, cost = map(int, sys.stdin.readline().split())
     graph[v1].append((cost, v2))
+    graph_rev[v2].append((cost, v1))
 
 ans = [0] * (V + 1)
 back = dijkstra(P, graph)
-
-for i in range(1, V + 1):
-    go = dijkstra(i, graph)
-    ans[i] = go[P] + back[i]
+go = dijkstra(P, graph_rev)
 
 
-print(max(ans))
+print(max(go[i] + back[i] for i in range(1, V + 1)))
