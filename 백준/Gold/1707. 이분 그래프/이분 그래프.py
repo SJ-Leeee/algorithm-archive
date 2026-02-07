@@ -1,50 +1,42 @@
 import sys
 
-sys.setrecursionlimit(100000)
+sys.setrecursionlimit(10**5)
 
+def dfs_recurse(graph, n):
+    color = [-1] * (n + 1)
 
-def dfs_recur(adjacency_list):
-
-    visited = {}
-
-    def dfs(vertex, flag):
-        visited[vertex] = flag
-
-        for item in adjacency_list[vertex]:  # 여기있는 애들은 모두 반대플래그줘야돼
-            if item in visited and visited[item] == flag:
-                return False  # 걍 끝내버려야됨
-            if item not in visited:
-                result = dfs(item, not flag)  # 다음친구들은 반대 flag 줘야됨
-                if not result:
+    def dfs(v):
+        for nv in graph[v]:
+            if color[nv] == color[v]:
+                return False
+            if color[nv] == -1:
+                color[nv] = abs(color[v] - 1)
+                if not dfs(nv):
                     return False
-
         return True
 
-    for vertex in adjacency_list:
-        if vertex not in visited:  # 새로운 연결 성분
-            if not dfs(vertex, True):  # 이분 그래프 아니면
+    for v in range(1, n + 1):
+        if color[v] == -1:
+            color[v] = 0
+            if not dfs(v):  # ✅ 반환값 체크
                 return False
 
     return True
 
 
 N = int(sys.stdin.readline())
+for _ in range(N):  # 케이스
+    V, E = map(int, sys.stdin.readline().split())  # 정점과 간선
+    graph = {}
+    color = [-1] * (V + 1)  # -1 방문x, 1,0
 
-for i in range(N):  # 두번 반복
-    adjacency_list = {}  # 인접리스트 초기화
-    v, e = map(int, sys.stdin.readline().split())  # 이번턴의 정점과 간선개수
+    for i in range(1, V + 1):
+        graph[i] = []
 
-    for j in range(1, v + 1):
-        adjacency_list[j] = []  # 정점생성
-
-    for k in range(e):
+    for _ in range(E):
         v1, v2 = map(int, sys.stdin.readline().split())
-        adjacency_list[v1].append(v2)
-        adjacency_list[v2].append(v1)  # 간선 생성
+        graph[v1].append(v2)
+        graph[v2].append(v1)
 
-    r_flag = dfs_recur(adjacency_list)
-
-    if r_flag:
-        print("YES")
-    else:
-        print("NO")
+    ret = dfs_recurse(graph, V)
+    print("YES") if ret else print("NO")
