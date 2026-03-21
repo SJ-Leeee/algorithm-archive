@@ -1,14 +1,15 @@
 def solution(clothes):
-    answer = 1
-    kind_dict = {}
-    for _, kind in clothes:
-        if kind in kind_dict:
-            kind_dict[kind] += 1
+    type_dict = {}
+    for item in clothes:
+        c_type = item[1]  # 타입이름
+        if c_type in type_dict:
+            type_dict[c_type] += 1
         else:
-            kind_dict[kind] = 2 # 안입는것까지 감안
-    for i in kind_dict.values():
-        answer *= i
-    
-    return answer - 1 
-    
-        
+            type_dict[c_type] = 1
+
+    answer = 1
+    for i in type_dict.values():
+
+        answer *= i + 1
+
+    return answer - 1
