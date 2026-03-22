@@ -2,27 +2,22 @@ from collections import deque
 
 
 def solution(progresses, speeds):
-    answer = []
-    remain_list = deque()
-    for idx, item in enumerate(progresses):
-        remain = 100 - item
-        remainday = (remain + speeds[idx] - 1) // speeds[idx]
-        remain_list.append(remainday)
+    # 프로그래스가 다 빠질때까지
+    ## 다음프로그래스가 day*speed가 넘어갈때까지
+    result = []
+    pr_deq = deque(progresses)
+    spd_deq = deque(speeds)
+    day = 0
+    while pr_deq:
+        day += 1
+        clear_cnt = 0
+        # 만약 통과면
+        while pr_deq and 100 - pr_deq[0] <= day * spd_deq[0]:
+            clear_cnt += 1
+            pr_deq.popleft()
+            spd_deq.popleft()
 
-    first_dep = -1
-    deploy_cnt = 1
-    while remain_list:
-        if first_dep < remain_list[0]:
-            first_dep = remain_list.popleft()
-            answer.append(deploy_cnt)
-            deploy_cnt = 1
+        if clear_cnt > 0:
+            result.append(clear_cnt)
 
-        else:
-            remain_list.popleft()
-            deploy_cnt += 1
-    answer.append(deploy_cnt)
-
-    return answer[1:]
-
-
-solution([93, 30, 55], [1, 30, 5])
+    return result
